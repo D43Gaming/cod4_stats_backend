@@ -14,3 +14,8 @@ Stats should be stored per player and server
 GET /statsapi/getstats/<playerid>/<serverid> returns stats as a json object
 
 POST /statsapi/addstats/<playerid>/<serverid> updates stats of a player
+
+## V2 Weapon Stats
+Store weaponstats on roundends. 
+
+## V3 
