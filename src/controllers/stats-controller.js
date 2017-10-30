@@ -1,6 +1,9 @@
 const LOG = require('../utils/log')(module);
 const _ = require('lodash');
 const dbConnection = require('../utils/db-connection');
+const sql = require('sql-query');
+const query = sql.Query();
+const select = query.select();
 
 let instance;
 
@@ -13,12 +16,13 @@ function StatsController() {
 }
 
 StatsController.prototype.getData = (playerId, serverId, callback) => {
-    dbConnection.query(`SELECT * FROM stats WHERE playerId = ${playerId} AND serverId = ${serverId}`
-        , (err, res) => {
-            if (err) throw err;
+    let query = select.from('stats').where({ playerId, serverId }).build();
 
-            callback(res);
-        });
+    dbConnection.query(query, (err, res) => {
+        if (err) throw err;
+
+        callback(res);
+    });
 };
 
 module.exports = StatsController;
