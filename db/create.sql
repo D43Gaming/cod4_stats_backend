@@ -1,0 +1,37 @@
+CREATE TABLE `stats` (
+  `kills` DOUBLE NOT NULL,
+  `deaths` DOUBLE NOT NULL,
+  `killstreak` DOUBLE NOT NULL,
+  `deathstreak` DOUBLE NOT NULL,
+  `headshots` DOUBLE NOT NULL,
+  `playtime` DOUBLE NOT NULL,
+  `playerId` INT(11) NOT NULL,
+  `serverId` INT(11) NOT NULL,
+  PRIMARY KEY (`serverId`,`playerId`),
+  UNIQUE KEY `playerId_server_id_UNIQUE` (`playerId`,`serverId`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+CREATE TABLE `weapon` (
+  `ID` INT NOT NULL AUTO_INCREMENT,
+  `NAME` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE INDEX `NAME_UNIQUE` (`NAME` ASC));
+
+
+CREATE TABLE `player_weapon_stats` (
+  `PLAYER_ID` INT NOT NULL,
+  `SERVER_ID` INT NOT NULL,
+  `WEAPON_ID` DOUBLE NOT NULL,
+  `KILLS` DOUBLE NULL,
+  `HEADSHOTS` DOUBLE NULL,
+  `SHOTS` DOUBLE NULL,
+  `HITS` DOUBLE NULL,
+  PRIMARY KEY (`PLAYER_ID`, `SERVER_ID`),
+  UNIQUE INDEX `WEAPON_PLAYER_SERVER_UNIQUE` (`WEAPON_ID`, `SERVER_ID`, `PLAYER_ID`),
+  CONSTRAINT `player_weapon_stats_wp_id` FOREIGN KEY (`WEAPON_ID`) REFERENCES `stats`.`weapon` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION);
+
+CREATE TABLE `stats_version` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `version` INT NULL,
+  PRIMARY KEY (`id`));
