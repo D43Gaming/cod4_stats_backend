@@ -5,24 +5,26 @@ module.exports = function(app, express) {
     const errorHandler = require('errorhandler');
     const StatsController = require('../controllers/stats-controller');
     const statsController = new StatsController();
+    const WpController = require('../controllers/weapon-stats-controller');
+    const weaponController = new WpController();
     const _ = require('lodash');
     // var path = require('path');
 
 
-    //app.use(bodyParser.urlencoded({extended: false}));
-    //app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({ extended: true }));
+    app.use(bodyParser.json());
     //app.use(bodyParser({ keepExtensions: true, uploadDir: __dirname + '../public/uploads' }));
 
     app.use(morgan('dev'));
 
-    app.all('/statsapi/*', function (req, res, next) {
+    app.all('/stats/*', (req, res, next) => {
         next();
     });
 
-    app.get('/statsapi/getstats', (req, res) => {
+    app.get('/stats/getstats/:playerid/:serverid', (req, res) => {
         try {
-            let playerId = req.query.playerid;
-            let serverId = req.query.serverid;
+            let playerId = req.params.playerid;
+            let serverId = req.params.serverid;
 
             if (_.isEmpty(playerId) || _.isEmpty(serverId)) {
                 res.json({
@@ -30,7 +32,7 @@ module.exports = function(app, express) {
                 });
             }
 
-            statsController.getData(playerId, serverId, data => {
+            statsController.getStats(playerId, serverId, data => {
                 res.json(data);
             });
         } catch (e) {
@@ -39,6 +41,34 @@ module.exports = function(app, express) {
                 error: e
             })
         }
+    });
+
+    app.post('/stats/updatestats/:playerid/:serverid', (req, res) => {
+        let playerId = req.params.playerid;
+        let serverId = req.params.serverid;
+
+        if (_.isEmpty(playerId) || _.isEmpty(serverId)) {
+            res.json({
+                error: `Wrong parameters, playerId = ${playerId}, serverId = ${serverId}`
+            });
+        }
+
+        statsController.updateStats(playerId, serverId, req.body);
+
+        res.end();
+    });
+
+    app.get('/stats/getweaponstats/:playerid/:serverid', (req, res) => {
+        let playerId = req.params.playerid;
+        let serverId = req.params.serverid;
+
+        if (_.isEmpty(playerId) || _.isEmpty(serverId)) {
+            res.json({
+                error: `Wrong parameters, playerId = ${playerId}, serverId = ${serverId}`
+            });
+        }
+
+        weaponController.getStats(playerId, serverId, data => res.json(data));
     });
 
     app.use(function(req, res) {

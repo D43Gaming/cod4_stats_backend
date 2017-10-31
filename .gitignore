@@ -5,4 +5,5 @@ node_modules
 /.settings
 /RUNNING_PID
 /application.log
+/utils/db-conf.json
 
