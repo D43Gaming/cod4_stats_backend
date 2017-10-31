@@ -71,6 +71,15 @@ module.exports = function(app, express) {
         weaponController.getStats(playerId, serverId, data => res.json(data));
     });
 
+    function isLocal(req, res, next) {
+        let remote = req.ip || req.connection.remoteAddress
+        console.log("in islocal");
+        if ((remote === '::1') || (remote === 'localhost'))
+            return next();
+        else
+            return next('route'); //call next /test route to handle check on authentication.
+    }
+
     app.use(function(req, res) {
         res.status(404).send(`Woops! Requst ${req.url} not found, sorry!`);
     });

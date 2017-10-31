@@ -3,9 +3,14 @@ const mysql = require('mysql');
 const LOG = require('./log')(module);
 
 let connection;
-
+let instance;
 function DbConnection() {
-    this._init();
+    if (!instance) {
+        this._init();
+        instance = this;
+    }
+
+    return instance;
 }
 
 DbConnection.prototype.getConnection = () => {
