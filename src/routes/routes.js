@@ -21,7 +21,7 @@ module.exports = function(app, express) {
         next();
     });
 
-    app.get('/stats/getstats/:playerid/:serverid', (req, res) => {
+    app.get('/stats/getstats/:playerid/:serverid', isLocal, (req, res) => {
         try {
             let playerId = req.params.playerid;
             let serverId = req.params.serverid;
@@ -43,7 +43,7 @@ module.exports = function(app, express) {
         }
     });
 
-    app.post('/stats/updatestats/:playerid/:serverid', (req, res) => {
+    app.post('/stats/updatestats/:playerid/:serverid', isLocal, (req, res) => {
         let playerId = req.params.playerid;
         let serverId = req.params.serverid;
 
@@ -58,7 +58,7 @@ module.exports = function(app, express) {
         res.end();
     });
 
-    app.get('/stats/getweaponstats/:playerid/:serverid', (req, res) => {
+    app.get('/stats/getweaponstats/:playerid/:serverid', isLocal, (req, res) => {
         let playerId = req.params.playerid;
         let serverId = req.params.serverid;
 
@@ -71,13 +71,27 @@ module.exports = function(app, express) {
         weaponController.getStats(playerId, serverId, data => res.json(data));
     });
 
+    app.post('/stats/updateweaponstats/:playerid/:serverid', isLocal, (req, res) => {
+        let playerId = req.params.playerid;
+        let serverId = req.params.serverid;
+
+        if (_.isEmpty(playerId) || _.isEmpty(serverId)) {
+            res.json({
+                error: `Wrong parameters, playerId = ${playerId}, serverId = ${serverId}`
+            });
+        }
+        weaponController.updateStats(playerId, serverId, req.body);
+
+        res.end();
+    });
+
     function isLocal(req, res, next) {
-        let remote = req.ip || req.connection.remoteAddress
-        console.log("in islocal");
-        if ((remote === '::1') || (remote === 'localhost'))
+        let remote = req.ip || req.connection.remoteAddress;
+        if ((remote === '::1') || (remote === 'localhost')) {
             return next();
-        else
+        } else {
             return next('route'); //call next /test route to handle check on authentication.
+        }
     }
 
     app.use(function(req, res) {
@@ -87,7 +101,6 @@ module.exports = function(app, express) {
     app.use(function(err, req, res, next) {
         if (app.get('env') === 'development') {
             app.use(errorHandler());
-            //app.use(errorHandler(err, req, res, next));
         } else {
             res.send(500);
         }

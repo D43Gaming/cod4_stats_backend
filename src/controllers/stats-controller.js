@@ -56,8 +56,9 @@ StatsController.prototype.updateStats = (playerid32, serverid, data) => {
     dbConnection.getConnection().query(queryUpdate, (err, res) => {
         if (err) {
             LOG.error(err);
+        } else {
+            LOG.info(`Data was insert, playerId = ${playerid32}, serverId = ${serverid}`);
         }
-        LOG.info(`Data was insert, playerId = ${playerid32}, serverId = ${serverid}`);
     });
 
 };
