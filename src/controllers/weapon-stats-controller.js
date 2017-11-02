@@ -5,8 +5,6 @@ const DbConn = require('../utils/db-connection');
 const dbConnection = new DbConn();
 const sql = require('sql-query');
 const query = sql.Query();
-const select = query.select();
-const insert = query.insert();
 const defaultStats = {
     shots: 0,
     hits: 0,
@@ -27,7 +25,7 @@ function WeaponStatsController() {
 
 extend(WeaponStatsController, function () {
     this.getStats = (playerid32, serverid, callback) => {
-        let querySelect = select.from('weaponstats').where(playerid32, serverid).build();
+        let querySelect = query.select().from('weaponstats').where(playerid32, serverid).build();
 
         dbConnection.getConnection().query(querySelect, (err, res) => {
             if (err) {
@@ -43,7 +41,7 @@ extend(WeaponStatsController, function () {
         _.each(data, (stats, weapon) => {
             let statsData = _.assign(defaultStats, stats, {weapon, playerid: _.parseInt(playerid), serverid: _.parseInt(serverid)});
             let arr = _.map(stats, (v, k) => `${k} = ${v} `);
-            let queryUpdate = `${insert.into('weaponstats')
+            let queryUpdate = `${query.insert().into('weaponstats')
                 .set(statsData)
                 .build()} ON DUPLICATE KEY UPDATE ${arr.toString()}`;
 

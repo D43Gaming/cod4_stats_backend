@@ -4,8 +4,6 @@ const DbConn = require('../utils/db-connection');
 const dbConnection = new DbConn();
 const sql = require('sql-query');
 const query = sql.Query();
-const select = query.select();
-const insert = query.insert();
 
 let instance;
 
@@ -30,9 +28,9 @@ function StatsController() {
 }
 
 StatsController.prototype.getStats = (playerid32, serverid, callback) => {
-    let query = select.from('stats').select(columnNames).where({ playerid32, serverid }).build();
+    let querySelect = query.select().from('stats').select(columnNames).where({ playerid32, serverid }).build();
 
-    dbConnection.getConnection().query(query, (err, res) => {
+    dbConnection.getConnection().query(querySelect, (err, res) => {
         if (err) {
             LOG.error(err);
             return defaultStats;
@@ -49,7 +47,7 @@ StatsController.prototype.updateStats = (playerid32, serverid, data) => {
         return `${k} = ${v}`; //VALUES
     });
 
-    let queryUpdate = `${insert.into('stats')
+    let queryUpdate = `${query.insert().into('stats')
         .set(statsData)
         .build()} ON DUPLICATE KEY UPDATE ${arr.toString()}`;
 
