@@ -90,7 +90,7 @@ module.exports = function(app, express) {
             return next();
         } else {
             let remote = req.ip || req.connection.remoteAddress;
-            if ((remote === '::1') || (remote === 'localhost') || remote === '::ffff:127.0.0.1') {
+            if (remote === '::1' || remote === 'localhost' || remote === '::ffff:127.0.0.1') {
                 return next();
             } else {
                 return next('route'); //call next /test route to handle check on authentication.

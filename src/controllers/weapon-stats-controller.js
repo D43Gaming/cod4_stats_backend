@@ -39,7 +39,7 @@ extend(WeaponStatsController, function () {
     this.updateStats = (playerid, serverid, data) => {
         LOG.info(data);
         _.each(data, (stats, weapon) => {
-            let statsData = _.assign(defaultStats, stats, {weapon, playerid: _.parseInt(playerid), serverid: _.parseInt(serverid)});
+            let statsData = _.assign(defaultStats, stats, {weapon, playerid: playerid, serverid: _.parseInt(serverid)});
             let arr = _.map(stats, (v, k) => `${k} = ${v} `);
             let queryUpdate = `${query.insert().into('weaponstats')
                 .set(statsData)
