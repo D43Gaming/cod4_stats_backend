@@ -14,7 +14,11 @@ const defaultStats = {
     deathstreak : 0,
     hardpoint_radar_mp : 0,
     hardpoint_airstrike_mp : 0,
-    hardpoint_helicopter_mp : 0
+    hardpoint_helicopter_mp : 0,
+    playtime : 0,
+    objective_plant : 0,
+    objective_defuse : 0,
+    objective_capture : 0
 };
 
 const columnNames = _.keys(defaultStats);
