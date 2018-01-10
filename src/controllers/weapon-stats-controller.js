@@ -25,7 +25,7 @@ function WeaponStatsController() {
 
 extend(WeaponStatsController, function () {
     this.getStats = (playerid32, serverid, callback) => {
-        let querySelect = query.select().from('weaponstats').where(playerid32, serverid).build();
+        let querySelect = query.select().from('weaponstats').where({playerid32: playerid32, serverid: serverid}).build();
 
         dbConnection.getConnection().query(querySelect, (err, res) => {
             if (err) {
@@ -39,8 +39,8 @@ extend(WeaponStatsController, function () {
     this.updateStats = (playerid, serverid, data) => {
         LOG.info(data);
         _.each(data, (stats, weapon) => {
-            let statsData = _.assign(defaultStats, stats, {weapon, playerid: _.parseInt(playerid), serverid: _.parseInt(serverid)});
-            let arr = _.map(stats, (v, k) => `${k} = ${v} `);
+            let statsData = _.assign(_.clone(defaultStats), stats, {weapon, playerid: playerid, serverid: _.parseInt(serverid)});
+            let arr = _.map(stats, (v, k) => `${k} = ${k} + ${v} `);
             let queryUpdate = `${query.insert().into('weaponstats')
                 .set(statsData)
                 .build()} ON DUPLICATE KEY UPDATE ${arr.toString()}`;

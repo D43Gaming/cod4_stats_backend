@@ -75,6 +75,8 @@ module.exports = function(app, express) {
         let playerId = req.params.playerid;
         let serverId = req.params.serverid;
 
+	console.log(JSON.stringify(req.body, 0, 2));
+
         if (_.isEmpty(playerId) || _.isEmpty(serverId)) {
             res.json({
                 error: `Wrong parameters, playerId = ${playerId}, serverId = ${serverId}`
@@ -86,11 +88,15 @@ module.exports = function(app, express) {
     });
 
     function isLocal(req, res, next) {
-        let remote = req.ip || req.connection.remoteAddress;
-        if ((remote === '::1') || (remote === 'localhost') || remote === '::ffff:127.0.0.1') {
+        if (app.get('env') === 'dev') {
             return next();
         } else {
-            return next('route'); //call next /test route to handle check on authentication.
+            let remote = req.ip || req.connection.remoteAddress;
+            if ((remote === '::1') || (remote === 'localhost') || remote === '::ffff:127.0.0.1') {
+                return next();
+            } else {
+                return next('route'); //call next /test route to handle check on authentication.
+            }
         }
     }
 
@@ -99,7 +105,7 @@ module.exports = function(app, express) {
     });
 
     app.use(function(err, req, res, next) {
-        if (app.get('env') === 'development') {
+        if (app.get('env') === 'dev') {
             app.use(errorHandler());
         } else {
             res.send(500);
