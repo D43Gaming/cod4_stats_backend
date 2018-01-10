@@ -7,3 +7,4 @@ node_modules
 /application.log
 /utils/db-conf.json
 
+src/utils/db-conf.json
